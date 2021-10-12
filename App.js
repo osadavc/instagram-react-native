@@ -1,11 +1,9 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import HomeScreen from "./src/screens/HomeScreen";
+import "react-native-gesture-handler";
+import { SignedInStack } from "./navigation";
 
 const App = () => {
-  return <HomeScreen />;
+  return <SignedInStack />;
 };
 
 export default App;
-
-const styles = StyleSheet.create({});
