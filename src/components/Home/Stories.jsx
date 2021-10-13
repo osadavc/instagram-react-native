@@ -18,8 +18,8 @@ const Stories = () => {
             <View style={{ alignItems: "center" }}>
               <Image source={{ uri: story.image }} style={styles.story} />
               <Text style={{ color: "white" }}>
-                {story.user.length > 10
-                  ? story.user.slice(0, 10).toLowerCase() + "..."
+                {story.user.length > 8
+                  ? story.user.slice(0, 8).toLowerCase() + "..."
                   : story.user}
               </Text>
             </View>

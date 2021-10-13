@@ -29,7 +29,7 @@ const Post = ({ post }) => {
   const [isLiked, toggleLikes] = useState(false);
 
   useEffect(() => {
-    toggleLikes(post.likes_by_users.includes(auth.currentUser.uid));
+    toggleLikes(post?.likes_by_users?.includes(auth.currentUser.uid));
   }, [post]);
 
   const handleLike = () => {
@@ -74,7 +74,7 @@ const PostHeader = ({ post }) => (
       style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}
     >
       <Image
-        source={{ uri: post.profile_picture }}
+        source={{ uri: post?.profile_picture }}
         style={{
           width: 35,
           height: 35,
@@ -92,7 +92,7 @@ const PostHeader = ({ post }) => (
           fontSize: 14.5,
         }}
       >
-        {post.user}
+        {post?.user}
       </Text>
     </View>
 
@@ -115,7 +115,7 @@ const PostHeader = ({ post }) => (
 const PostImage = ({ post }) => (
   <View style={{ width: "100%", height: 450 }}>
     <Image
-      source={{ uri: post.imageUrl }}
+      source={{ uri: post?.imageUrl }}
       style={{ height: "100%", resizeMode: "cover" }}
     />
   </View>
@@ -162,7 +162,7 @@ const Icon = ({ imageStyle, imageSource }) => (
 const Likes = ({ post }) => (
   <View style={{ flexDirection: "row", marginTop: 8 }}>
     <Text style={{ color: "white", fontWeight: "600" }}>
-      {post.likes_by_users.length.toLocaleString("en")} Likes
+      {post?.likes_by_users?.length.toLocaleString("en")} Likes
     </Text>
   </View>
 );
@@ -193,7 +193,7 @@ const CommentSection = ({ post }) => (
 
 const Comments = ({ post }) => (
   <>
-    {post.comments.map((comment, index) => (
+    {post?.comments?.map((comment, index) => (
       <View key={index} style={{ flexDirection: "row", marginTop: 3 }}>
         <Text style={{ color: "white" }}>
           <Text style={{ fontWeight: "bold" }}>{comment.user} </Text>

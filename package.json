@@ -22,6 +22,7 @@
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-paper": "^4.9.2",
+    "react-native-skeleton-content": "^1.0.22",
     "react-native-web": "~0.13.12",
     "valid-url": "^1.0.9",
     "yup": "^0.32.10"
