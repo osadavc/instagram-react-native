@@ -5,7 +5,6 @@ import { StatusBar } from "expo-status-bar";
 import Header from "../components/Home/Header";
 import Stories from "../components/Home/Stories";
 import Post from "../components/Home/Post";
-import postData from "../data/posts";
 import BottomTabs from "../components/Home/BottomTabs";
 import bottomTabsData from "../data/bottomTabs";
 import { db } from "../../firebase";
