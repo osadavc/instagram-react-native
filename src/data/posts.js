@@ -4,7 +4,7 @@ export default [
     user: "cleverqazi",
     likes: 7560,
     caption: "Train Ride To HogwartsTrain Ride To HogwartsTrain Ride To ",
-    profilePicture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
+    profile_picture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
     comments: [
       {
         user: "cleverqazi",
@@ -22,7 +22,7 @@ export default [
     user: "cleverqazi",
     likes: 7560,
     caption: "Train Ride To Hogwarts",
-    profilePicture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
+    profile_picture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
     comments: [
       {
         user: "cleverqazi",
@@ -39,7 +39,7 @@ export default [
     user: "cleverqazi",
     likes: 7560,
     caption: "Train Ride To Hogwarts",
-    profilePicture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
+    profile_picture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
     comments: [
       {
         user: "cleverqazi",
@@ -52,7 +52,7 @@ export default [
     user: "cleverqazi",
     likes: 7560,
     caption: "Train Ride To Hogwarts",
-    profilePicture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
+    profile_picture: "https://www.filepicker.io/api/file/9GCYH9YQnyqu4Ymwmzu9",
     comments: [],
   },
 ];

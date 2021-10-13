@@ -1,9 +1,11 @@
 import React from "react";
 import "react-native-gesture-handler";
-import { SignedInStack } from "./navigation";
+import { LogBox } from "react-native";
+import AuthNavigation from "./AuthNavigation";
 
 const App = () => {
-  return <SignedInStack />;
+  LogBox.ignoreAllLogs();
+  return <AuthNavigation />;
 };
 
 export default App;

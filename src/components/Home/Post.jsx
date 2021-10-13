@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { View, Text, Image } from "react-native";
-import { Divider } from "react-native-elements";
+
+import firebase from "firebase";
+import { auth, db } from "../../../firebase";
 
 const postFooterIcons = [
   {
@@ -24,12 +26,31 @@ const postFooterIcons = [
 ];
 
 const Post = ({ post }) => {
+  const [isLiked, toggleLikes] = useState(false);
+
+  useEffect(() => {
+    toggleLikes(post.likes_by_users.includes(auth.currentUser.uid));
+  }, [post]);
+
+  const handleLike = () => {
+    db.collection("users")
+      .doc(post.uid)
+      .collection("posts")
+      .doc(post.id)
+      .update({
+        likes_by_users: !isLiked
+          ? firebase.firestore.FieldValue.arrayUnion(auth.currentUser.uid)
+          : firebase.firestore.FieldValue.arrayRemove(auth.currentUser.uid),
+      })
+      .then();
+  };
+
   return (
     <View style={{ marginBottom: 14 }}>
       <PostHeader post={post} />
       <PostImage post={post} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
-        <PostFooter />
+        <PostFooter post={post} handleLike={handleLike} isLiked={isLiked} />
         <Likes post={post} />
         <Caption post={post} />
         <CommentSection post={post} />
@@ -53,7 +74,7 @@ const PostHeader = ({ post }) => (
       style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}
     >
       <Image
-        source={{ uri: post.profilePicture }}
+        source={{ uri: post.profile_picture }}
         style={{
           width: 35,
           height: 35,
@@ -100,13 +121,19 @@ const PostImage = ({ post }) => (
   </View>
 );
 
-const PostFooter = () => (
+const PostFooter = ({ handleLike, post, isLiked }) => (
   <View style={{ flexDirection: "row" }}>
     <View style={styles.leftFooterIconsContainer}>
-      <Icon
-        imageSource={postFooterIcons[0].imageSource}
-        imageStyle={styles.footerIcon}
-      />
+      <TouchableOpacity onPress={handleLike}>
+        <Image
+          style={styles.footerIcon}
+          source={
+            isLiked
+              ? postFooterIcons[0].likedImageUrl
+              : postFooterIcons[0].imageSource
+          }
+        />
+      </TouchableOpacity>
       <Icon
         imageSource={postFooterIcons[1].imageSource}
         imageStyle={[styles.footerIcon, { width: 22, height: 22 }]}
@@ -135,7 +162,7 @@ const Icon = ({ imageStyle, imageSource }) => (
 const Likes = ({ post }) => (
   <View style={{ flexDirection: "row", marginTop: 8 }}>
     <Text style={{ color: "white", fontWeight: "600" }}>
-      {post.likes.toLocaleString("en")} Likes
+      {post.likes_by_users.length.toLocaleString("en")} Likes
     </Text>
   </View>
 );
@@ -155,7 +182,7 @@ const Caption = ({ post }) => (
 
 const CommentSection = ({ post }) => (
   <View style={{ marginTop: 5 }}>
-    {!!post.comments?.length && (
+    {!!post?.comments?.length && (
       <Text style={{ color: "gray" }}>
         View{post.comments.length > 1 ? " all" : ""} {post.comments.length} {""}
         {post.comments.length > 1 ? "comments" : "comment"}

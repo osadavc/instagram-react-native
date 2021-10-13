@@ -1,7 +1,7 @@
+import { StatusBar } from "expo-status-bar";
 import React from "react";
 import {
   StyleSheet,
-  Text,
   View,
   Image,
   Keyboard,
@@ -11,17 +11,20 @@ import LoginForm from "../components/LoginScreen/LoginForm";
 
 const LoginScreen = () => {
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require("../../assets/instagram.png")}
-            style={{ height: 140, width: 140 }}
-          />
+    <>
+      <StatusBar backgroundColor="#fff" />
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../assets/instagram.png")}
+              style={{ height: 140, width: 140 }}
+            />
+          </View>
+          <LoginForm />
         </View>
-        <LoginForm />
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </>
   );
 };
 

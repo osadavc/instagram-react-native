@@ -1,13 +1,18 @@
 import React from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { auth } from "../../../firebase";
 
 const Header = () => {
   const navigation = useNavigation();
 
+  const onSignOut = () => {
+    auth.signOut();
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onSignOut}>
         <Image
           style={styles.logo}
           source={require("../../../assets/header-logo.png")}

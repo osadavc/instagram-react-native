@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
@@ -8,15 +8,31 @@ import Post from "../components/Home/Post";
 import postData from "../data/posts";
 import BottomTabs from "../components/Home/BottomTabs";
 import bottomTabsData from "../data/bottomTabs";
+import { db } from "../../firebase";
 
 const HomeScreen = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    db.collectionGroup("posts")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const postList = [];
+        snapshot.docs.forEach((doc) => {
+          console.log(doc.data());
+          postList.push({ id: doc.id, ...doc.data() });
+        });
+        setPosts(postList);
+      });
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Header />
       <Stories />
       <ScrollView>
-        {postData.map((post, index) => (
+        {posts.map((post, index) => (
           <Post key={index} post={post} />
         ))}
       </ScrollView>
@@ -30,6 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     flex: 1,
     paddingTop: 30,
+    paddingBottom: 50,
   },
 });
 

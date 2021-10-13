@@ -1,10 +1,13 @@
 import { useNavigation } from "@react-navigation/core";
 import { Formik } from "formik";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, TextInput, Image, Text, Keyboard } from "react-native";
 import { Divider, Button as ButtonElement } from "react-native-elements";
 import * as Yup from "yup";
 import validUrl from "valid-url";
+
+import firebase from "firebase";
+import { auth, db } from "../../../firebase";
 
 const PLACEHOLDER_IMAGE =
   "https://www.brownweinraub.com/wp-content/uploads/2017/09/placeholder.jpg";
@@ -18,11 +21,45 @@ const FormikPostUploader = () => {
   });
 
   const [thumbnailUrl, setThumbnailUrl] = useState(null);
+  const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
   const navigation = useNavigation();
 
-  const submitPost = (values) => {
-    navigation.goBack();
-    Keyboard.dismiss();
+  useEffect(() => {
+    getUsername();
+  }, []);
+
+  const getUsername = () => {
+    const user = auth.currentUser;
+    db.collection("users")
+      .doc(user.uid)
+      .get()
+      .then((user) => {
+        setCurrentLoggedInUser({
+          uid: user.data().uid,
+          username: user.data().username,
+          profile_picture: user.data().profile_picture,
+        });
+      });
+  };
+
+  const submitPost = ({ imageUrl, caption }) => {
+    db.collection("users")
+      .doc(currentLoggedInUser.uid)
+      .collection("posts")
+      .add({
+        user: currentLoggedInUser.username,
+        uid: currentLoggedInUser.uid,
+        profile_picture: currentLoggedInUser.profile_picture,
+        imageUrl,
+        caption,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        likes_by_users: [],
+        comments: [],
+      })
+      .then(() => {
+        Keyboard.dismiss();
+        navigation.goBack();
+      });
   };
 
   return (
