@@ -6,10 +6,9 @@ import { auth } from "../../../firebase";
 const Header = () => {
   const navigation = useNavigation();
 
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity >
+      <TouchableOpacity>
         <Image
           style={styles.logo}
           source={require("../../../assets/header-logo.png")}

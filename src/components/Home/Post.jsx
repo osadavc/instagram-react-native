@@ -157,7 +157,7 @@ const PostImage = ({ post, handleDoubleTapLike }) => (
   </DoubleTapHeart>
 );
 
-const PostFooter = ({ handleLike, post, isLiked }) => (
+const PostFooter = ({ handleLike, isLiked }) => (
   <View style={{ flexDirection: "row" }}>
     <View style={styles.leftFooterIconsContainer}>
       <TouchableOpacity onPress={handleLike}>
@@ -198,7 +198,10 @@ const Icon = ({ imageStyle, imageSource }) => (
 const Likes = ({ post }) => (
   <View style={{ flexDirection: "row", marginTop: 8 }}>
     <Text style={{ color: "white", fontWeight: "600" }}>
-      {post?.likes_by_users?.length.toLocaleString("en")} Likes
+      {post?.likes_by_users?.length.toLocaleString("en")}{" "}
+      {post?.likes_by_users.length > 1 || post?.likes_by_users.length == 0
+        ? "Likes"
+        : "Like"}
     </Text>
   </View>
 );
