@@ -22,11 +22,4 @@ export default [
     inactive:
       "https://img.icons8.com/fluency-systems-regular/48/ffffff/shopping-bag-full.png",
   },
-  {
-    name: "Profile",
-    active:
-      "https://yt3.ggpht.com/ytc/AKedOLRY9Un_v7Xr9dG1F5NEkqGsGSqwqRz0O3w3r1mI=s900-c-k-c0x00ffffff-no-rj",
-    inactive:
-      "https://yt3.ggpht.com/ytc/AKedOLRY9Un_v7Xr9dG1F5NEkqGsGSqwqRz0O3w3r1mI=s900-c-k-c0x00ffffff-no-rj",
-  },
 ];

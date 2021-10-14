@@ -17,7 +17,8 @@ const HomeScreen = () => {
 
   useEffect(() => {
     toggleLoading(true);
-    db.collectionGroup("posts")
+    const unsubscribe = db
+      .collectionGroup("posts")
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
         const postList = [];
@@ -27,6 +28,8 @@ const HomeScreen = () => {
         });
         setPosts(postList);
       });
+
+    return () => unsubscribe();
   }, []);
 
   return (

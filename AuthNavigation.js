@@ -1,22 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
 import { SignedInStack, SignedOutStack } from "./navigation";
 
+import { useRecoilState } from "recoil";
+import { authState } from "./src/atoms/authAtom";
+
 const AuthNavigation = () => {
-  const [currentUser, setCurrentUser] = useState(null);
+  // const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, toggleLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useRecoilState(authState);
 
   useEffect(() => {
     toggleLoading(true);
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setCurrentUser(user);
+        db.collection("users")
+          .doc(user.uid)
+          .get()
+          .then((doc) => {
+            setCurrentUser({
+              uid: user.uid,
+              name: user.displayName,
+              email: user.email,
+              username: doc.data().username,
+              profilePicture: doc.data().profile_picture,
+            });
+            toggleLoading(false);
+          });
       } else {
         setCurrentUser(null);
+        toggleLoading(false);
       }
-      toggleLoading(false);
     });
     return () => unsubscribe();
   }, []);

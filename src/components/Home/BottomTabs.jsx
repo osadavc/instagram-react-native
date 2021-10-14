@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
-
 import { Divider } from "react-native-elements";
+
+import { useRecoilValue } from "recoil";
+import { authState } from "../../atoms/authAtom";
 
 const BottomTabs = ({ icons }) => {
   const [activeTab, setActiveTab] = useState("Home");
+  const currentUser = useRecoilValue(authState);
 
   const Icon = ({ icon }) => (
     <TouchableOpacity onPress={() => setActiveTab(icon.name)}>
@@ -25,6 +28,13 @@ const BottomTabs = ({ icons }) => {
         {icons.map((icon, index) => (
           <Icon key={index} icon={icon} />
         ))}
+        <Icon
+          icon={{
+            name: "Profile",
+            active: currentUser.profilePicture,
+            inactive: currentUser.profilePicture,
+          }}
+        />
       </View>
     </View>
   );

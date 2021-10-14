@@ -1,13 +1,18 @@
 import { useNavigation } from "@react-navigation/core";
 import { Formik } from "formik";
 import React, { useState, useEffect } from "react";
-import { View, TextInput, Image, Text, Keyboard } from "react-native";
+import { View, TextInput, Image, Text, Keyboard, Platform } from "react-native";
 import { Divider, Button as ButtonElement } from "react-native-elements";
 import * as Yup from "yup";
 import validUrl from "valid-url";
 
 import firebase from "firebase";
 import { auth, db } from "../../../firebase";
+import { authState } from "../../atoms/authAtom";
+import { useRecoilValue } from "recoil";
+
+import * as ImagePicker from "expo-image-picker";
+import { Alert } from "react-native";
 
 const PLACEHOLDER_IMAGE =
   "https://www.brownweinraub.com/wp-content/uploads/2017/09/placeholder.jpg";
@@ -21,35 +26,18 @@ const FormikPostUploader = () => {
   });
 
   const [thumbnailUrl, setThumbnailUrl] = useState(null);
-  const [currentLoggedInUser, setCurrentLoggedInUser] = useState(null);
+  const currentUser = useRecoilValue(authState);
+
   const navigation = useNavigation();
-
-  useEffect(() => {
-    getUsername();
-  }, []);
-
-  const getUsername = () => {
-    const user = auth.currentUser;
-    db.collection("users")
-      .doc(user.uid)
-      .get()
-      .then((user) => {
-        setCurrentLoggedInUser({
-          uid: user.data().uid,
-          username: user.data().username,
-          profile_picture: user.data().profile_picture,
-        });
-      });
-  };
 
   const submitPost = ({ imageUrl, caption }) => {
     db.collection("users")
-      .doc(currentLoggedInUser.uid)
+      .doc(currentUser.uid)
       .collection("posts")
       .add({
-        user: currentLoggedInUser.username,
-        uid: currentLoggedInUser.uid,
-        profile_picture: currentLoggedInUser.profile_picture,
+        user: currentUser.username,
+        uid: currentUser.uid,
+        profile_picture: currentUser.profilePicture,
         imageUrl,
         caption,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -61,6 +49,20 @@ const FormikPostUploader = () => {
         navigation.goBack();
       });
   };
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Sorry, we need access to photos and media on your device"
+          );
+        }
+      }
+    })();
+  }, []);
 
   return (
     <View>
@@ -128,7 +130,7 @@ const FormikPostUploader = () => {
             <View style={{ marginTop: 20 }}>
               <ButtonElement
                 onPress={handleSubmit}
-                title="Share"
+                title="Post"
                 disabled={!(isValid && dirty)}
                 type="outline"
               />

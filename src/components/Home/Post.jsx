@@ -3,7 +3,10 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import { View, Text, Image } from "react-native";
 
 import firebase from "firebase";
-import { auth, db } from "../../../firebase";
+import { db } from "../../../firebase";
+
+import { authState } from "../../atoms/authAtom";
+import { useRecoilValue } from "recoil";
 
 const postFooterIcons = [
   {
@@ -27,9 +30,10 @@ const postFooterIcons = [
 
 const Post = ({ post }) => {
   const [isLiked, toggleLikes] = useState(false);
+  const currentUser = useRecoilValue(authState);
 
   useEffect(() => {
-    toggleLikes(post?.likes_by_users?.includes(auth.currentUser.uid));
+    toggleLikes(post?.likes_by_users?.includes(currentUser.uid));
   }, [post]);
 
   const handleLike = () => {
@@ -39,8 +43,8 @@ const Post = ({ post }) => {
       .doc(post.id)
       .update({
         likes_by_users: !isLiked
-          ? firebase.firestore.FieldValue.arrayUnion(auth.currentUser.uid)
-          : firebase.firestore.FieldValue.arrayRemove(auth.currentUser.uid),
+          ? firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
+          : firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
       })
       .then();
   };
