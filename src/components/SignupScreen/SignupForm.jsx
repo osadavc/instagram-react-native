@@ -42,10 +42,9 @@ const SignupForm = () => {
           username,
           profile_picture: `https://ui-avatars.com/api/?name=${username}&background=${getRandomColour()}&size=512`,
         });
-      toggleLoading(false);
     } catch (error) {
-      toggleLoading(false);
       Alert.alert("Error", error.message);
+      toggleLoading(false);
     }
   };
 

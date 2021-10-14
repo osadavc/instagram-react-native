@@ -31,12 +31,12 @@ const LoginForm = () => {
       toggleLoading(true);
       await auth.signInWithEmailAndPassword(email, password);
     } catch (error) {
+      toggleLoading(false);
       Alert.alert("Error", error.message, [
         { text: "Got It", onPress: () => null, style: "cancel" },
         { text: "Sign Up", onPress: () => navigation.navigate("SignupScreen") },
       ]);
     }
-    toggleLoading(false);
   };
 
   return (
