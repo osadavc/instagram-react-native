@@ -5,7 +5,7 @@ import AuthNavigation from "./AuthNavigation";
 import { RecoilRoot } from "recoil";
 
 const App = () => {
-  LogBox.ignoreAllLogs();
+  LogBox.ignoreLogs([`Setting a timer for a long period`]);
   return (
     <RecoilRoot>
       <AuthNavigation />

@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/storage";
 
 /* cSpell:disable */
 const firebaseConfig = {
@@ -17,5 +18,6 @@ const firebaseConfig = {
 
 const auth = firebase.auth();
 const db = firebase.firestore();
+const storage = firebase.storage();
 
-export { auth, db };
+export { auth, db, storage };

@@ -1,13 +1,23 @@
 import { useNavigation } from "@react-navigation/core";
 import { Formik } from "formik";
 import React, { useState, useEffect } from "react";
-import { View, TextInput, Image, Text, Keyboard, Platform } from "react-native";
+import {
+  View,
+  TextInput,
+  Image,
+  Text,
+  Keyboard,
+  Platform,
+  TouchableOpacity,
+} from "react-native";
 import { Divider, Button as ButtonElement } from "react-native-elements";
 import * as Yup from "yup";
 import validUrl from "valid-url";
 
+import AntDesign from "react-native-vector-icons/AntDesign";
+
 import firebase from "firebase";
-import { auth, db } from "../../../firebase";
+import { storage, db } from "../../../firebase";
 import { authState } from "../../atoms/authAtom";
 import { useRecoilValue } from "recoil";
 
@@ -15,22 +25,56 @@ import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 
 const PLACEHOLDER_IMAGE =
-  "https://www.brownweinraub.com/wp-content/uploads/2017/09/placeholder.jpg";
+  "https://www.schemecolor.com/images/color-image-thumb.php?tx&w=1200&h=1200&hex=BBBBBB";
 
 const FormikPostUploader = () => {
   const uploadPostSchema = Yup.object().shape({
-    imageUrl: Yup.string()
-      .url("Image URL Must Be A Valid URL")
-      .required("A URL is Required"),
     caption: Yup.string().max(2200, "Caption Has Reached The Character Limit"),
   });
 
   const [thumbnailUrl, setThumbnailUrl] = useState(null);
+  const [isLoading, toggleLoading] = useState(false);
   const currentUser = useRecoilValue(authState);
 
   const navigation = useNavigation();
 
-  const submitPost = ({ imageUrl, caption }) => {
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setThumbnailUrl(result.uri);
+    }
+  };
+
+  const submitPost = async ({ caption }) => {
+    toggleLoading(true);
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => {
+        resolve(xhr.response);
+      };
+      xhr.onerror = (e) => {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", thumbnailUrl, true);
+      xhr.send(null);
+    });
+
+    const ref = storage
+      .ref()
+      .child(
+        `${currentUser.uid} ${currentUser.username} ${new Date().toISOString()}`
+      );
+    const snapshot = await ref.put(blob);
+    blob.close();
+
     db.collection("users")
       .doc(currentUser.uid)
       .collection("posts")
@@ -38,7 +82,7 @@ const FormikPostUploader = () => {
         user: currentUser.username,
         uid: currentUser.uid,
         profile_picture: currentUser.profilePicture,
-        imageUrl,
+        imageUrl: await snapshot.ref.getDownloadURL(),
         caption,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         likes_by_users: [],
@@ -46,6 +90,7 @@ const FormikPostUploader = () => {
       })
       .then(() => {
         Keyboard.dismiss();
+        toggleLoading(false);
         navigation.goBack();
       });
   };
@@ -67,7 +112,7 @@ const FormikPostUploader = () => {
   return (
     <View>
       <Formik
-        initialValues={{ caption: "", imageUrl: "" }}
+        initialValues={{ caption: "" }}
         onSubmit={(values) => submitPost(values)}
         validationSchema={uploadPostSchema}
       >
@@ -80,25 +125,70 @@ const FormikPostUploader = () => {
           isValid,
           dirty,
         }) => (
-          <View style={{ marginLeft: 10 }}>
+          <View style={{ marginHorizontal: 5, marginRight: 5 }}>
             <View
               style={{
-                margin: 20,
-                marginLeft: 0,
                 marginTop: 50,
-                flexDirection: "row",
               }}
             >
-              <Image
-                source={{
-                  uri: validUrl.isUri(thumbnailUrl)
-                    ? thumbnailUrl
-                    : PLACEHOLDER_IMAGE,
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: thumbnailUrl ? 10 : 0,
                 }}
-                style={{ width: 100, height: 100 }}
-              />
+              >
+                <Image
+                  source={{
+                    uri: validUrl.isUri(thumbnailUrl)
+                      ? thumbnailUrl
+                      : PLACEHOLDER_IMAGE,
+                  }}
+                  style={{ width: "100%", height: 320, borderRadius: 10 }}
+                />
+                <View
+                  style={{
+                    position: "absolute",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {!!thumbnailUrl || (
+                    <TouchableOpacity
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
+                      }}
+                      onPress={pickImage}
+                    >
+                      <AntDesign name="plus" color="#000" size={65} />
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          textAlign: "center",
+                          marginTop: 8,
+                        }}
+                      >
+                        Upload Image
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+              {thumbnailUrl && (
+                <ButtonElement
+                  onPress={() => setThumbnailUrl(null)}
+                  title="Clear"
+                  type="outline"
+                  buttonStyle={{
+                    width: 100,
+                    alignSelf: "flex-end",
+                  }}
+                />
+              )}
 
-              <View style={{ flex: 1, marginLeft: 12 }}>
+              <View style={{ marginTop: 15 }}>
                 <TextInput
                   placeholder="Write A Caption"
                   placeholderTextColor="gray"
@@ -111,27 +201,12 @@ const FormikPostUploader = () => {
               </View>
             </View>
 
-            <Divider orientation="vertical" />
-            <TextInput
-              placeholder="Enter Image Url"
-              placeholderTextColor="gray"
-              onChange={(e) => setThumbnailUrl(e.nativeEvent.text)}
-              style={{ color: "white", fontSize: 16, marginTop: 10 }}
-              onChangeText={handleChange("imageUrl")}
-              onBlur={handleBlur("imageUrl")}
-              value={values.imageUrl}
-            />
-            {errors.imageUrl && (
-              <Text style={{ fontSize: 12, color: "red" }}>
-                {errors.imageUrl}
-              </Text>
-            )}
-
             <View style={{ marginTop: 20 }}>
               <ButtonElement
                 onPress={handleSubmit}
+                loading={isLoading}
                 title="Post"
-                disabled={!(isValid && dirty)}
+                disabled={!(isValid && dirty && !!thumbnailUrl)}
                 type="outline"
               />
             </View>
