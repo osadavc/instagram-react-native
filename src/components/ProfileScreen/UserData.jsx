@@ -27,6 +27,18 @@ const UserData = () => {
   }, []);
 
   const changeProfilePicture = async () => {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Sorry, we need access to photos and media on your device"
+          );
+        }
+      }
+    })();
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,

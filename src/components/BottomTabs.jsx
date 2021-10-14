@@ -48,6 +48,10 @@ const BottomTabs = () => {
           }}
           onPress={() => {
             navigation.navigate("HomeScreen");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "HomeScreen" }],
+            });
           }}
         />
         {bottomTabsData.map((icon, index) => (
