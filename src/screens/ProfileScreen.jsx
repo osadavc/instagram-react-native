@@ -28,11 +28,13 @@ const ProfileScreen = () => {
   const [isLoading, toggleLoading] = useState(true);
   const [posts, setPosts] = useState([{}, {}]);
 
+  const profilePostRef = db
+    .collection("users")
+    .doc(currentUser.uid)
+    .collection("posts");
+
   useEffect(() => {
-    const unsubscribe = db
-      .collection("users")
-      .doc(currentUser.uid)
-      .collection("posts")
+    const unsubscribe = profilePostRef
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
         const postList = [];
@@ -45,6 +47,10 @@ const ProfileScreen = () => {
 
     return () => unsubscribe();
   }, []);
+
+  const deletePost = (postId) => {
+    profilePostRef.doc(postId).delete();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -101,7 +107,11 @@ const ProfileScreen = () => {
               },
             ]}
           >
-            <Post key={index} post={post} />
+            <Post
+              key={index}
+              post={post}
+              deleteFunction={() => deletePost(post.id)}
+            />
           </SkeletonContent>
         ))}
       </ScrollView>

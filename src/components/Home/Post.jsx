@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { View, Text, Image } from "react-native";
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 import DoubleTapHeart from "../../components/Home/DoubleTapHeart";
 
@@ -34,7 +35,7 @@ const postFooterIcons = [
 const USER_PLACEHOLDER =
   "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
 
-const Post = ({ post }) => {
+const Post = ({ post, deleteFunction }) => {
   const [isLiked, toggleLikes] = useState(false);
   const [profilePicture, setProfilePicture] = useState(USER_PLACEHOLDER);
 
@@ -77,7 +78,11 @@ const Post = ({ post }) => {
 
   return (
     <View style={{ marginBottom: 14 }}>
-      <PostHeader post={post} profilePicture={profilePicture} />
+      <PostHeader
+        post={post}
+        profilePicture={profilePicture}
+        deleteFunction={deleteFunction}
+      />
       <PostImage post={post} handleDoubleTapLike={handleDoubleTapLike} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
         <PostFooter post={post} handleLike={handleLike} isLiked={isLiked} />
@@ -90,7 +95,7 @@ const Post = ({ post }) => {
   );
 };
 
-const PostHeader = ({ post, profilePicture }) => (
+const PostHeader = ({ post, profilePicture, deleteFunction }) => (
   <View
     style={{
       flexDirection: "row",
@@ -126,19 +131,30 @@ const PostHeader = ({ post, profilePicture }) => (
       </Text>
     </View>
 
-    <TouchableOpacity>
-      <Text
-        style={{
-          fontSize: 20,
-          color: "white",
-          marginTop: -16,
-          fontWeight: "bold",
-          marginRight: 10,
-        }}
-      >
-        ...
-      </Text>
-    </TouchableOpacity>
+    {!!deleteFunction ? (
+      <TouchableOpacity onPress={deleteFunction}>
+        <AntDesign
+          name="delete"
+          color="#fff"
+          size={23}
+          style={{ marginBottom: 12, paddingRight: 5 }}
+        />
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 20,
+            color: "white",
+            marginTop: -16,
+            fontWeight: "bold",
+            marginRight: 10,
+          }}
+        >
+          ...
+        </Text>
+      </TouchableOpacity>
+    )}
   </View>
 );
 
