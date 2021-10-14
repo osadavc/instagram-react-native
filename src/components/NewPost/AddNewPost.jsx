@@ -7,13 +7,13 @@ import FormikPostUploader from "./FormikPostUploader";
 const AddNewPost = () => {
   return (
     <View style={styles.container}>
-      <Header />
+      <Header text="Add New Post" />
       <FormikPostUploader />
     </View>
   );
 };
 
-const Header = () => {
+export const Header = ({ text, smallText }) => {
   const navigation = useNavigation();
 
   return (
@@ -26,7 +26,9 @@ const Header = () => {
           style={{ height: 28, width: 28 }}
         />
       </TouchableOpacity>
-      <Text style={styles.headerText}>Add New Post</Text>
+      <Text style={[styles.headerText, { fontSize: smallText && 17 }]}>
+        {text}
+      </Text>
       <View></View>
     </View>
   );

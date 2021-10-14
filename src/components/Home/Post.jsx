@@ -9,6 +9,7 @@ import { db } from "../../../firebase";
 
 import { authState } from "../../atoms/authAtom";
 import { useRecoilValue } from "recoil";
+import { useNavigation } from "@react-navigation/native";
 
 const postFooterIcons = [
   {
@@ -157,40 +158,51 @@ const PostImage = ({ post, handleDoubleTapLike }) => (
   </DoubleTapHeart>
 );
 
-const PostFooter = ({ handleLike, isLiked }) => (
-  <View style={{ flexDirection: "row" }}>
-    <View style={styles.leftFooterIconsContainer}>
-      <TouchableOpacity onPress={handleLike}>
-        <Image
-          style={styles.footerIcon}
-          source={
-            isLiked
-              ? postFooterIcons[0].likedImageUrl
-              : postFooterIcons[0].imageSource
-          }
+const PostFooter = ({ handleLike, isLiked, post }) => {
+  const navigation = useNavigation();
+
+  return (
+    <View style={{ flexDirection: "row" }}>
+      <View style={styles.leftFooterIconsContainer}>
+        <TouchableOpacity onPress={handleLike}>
+          <Image
+            style={styles.footerIcon}
+            source={
+              isLiked
+                ? postFooterIcons[0].likedImageUrl
+                : postFooterIcons[0].imageSource
+            }
+          />
+        </TouchableOpacity>
+        <Icon
+          imageSource={postFooterIcons[1].imageSource}
+          imageStyle={[styles.footerIcon, { width: 22, height: 22 }]}
+          onPress={() => {
+            navigation.navigate("CommentScreen", {
+              postOwner: post.user,
+              postOwnerUid: post.uid,
+              postId: post.id,
+            });
+          }}
         />
-      </TouchableOpacity>
-      <Icon
-        imageSource={postFooterIcons[1].imageSource}
-        imageStyle={[styles.footerIcon, { width: 22, height: 22 }]}
-      />
-      <Icon
-        imageSource={postFooterIcons[2].imageSource}
-        imageStyle={styles.footerIcon}
-      />
-    </View>
+        <Icon
+          imageSource={postFooterIcons[2].imageSource}
+          imageStyle={styles.footerIcon}
+        />
+      </View>
 
-    <View style={{ flex: 1, alignItems: "flex-end" }}>
-      <Icon
-        imageStyle={styles.footerIcon}
-        imageSource={postFooterIcons[3].imageSource}
-      />
+      <View style={{ flex: 1, alignItems: "flex-end" }}>
+        <Icon
+          imageStyle={styles.footerIcon}
+          imageSource={postFooterIcons[3].imageSource}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
-const Icon = ({ imageStyle, imageSource }) => (
-  <TouchableOpacity>
+const Icon = ({ imageStyle, imageSource, onPress }) => (
+  <TouchableOpacity onPress={onPress ? onPress : () => {}}>
     <Image style={imageStyle} source={imageSource} />
   </TouchableOpacity>
 );

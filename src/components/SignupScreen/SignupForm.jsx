@@ -22,7 +22,7 @@ const SignupForm = () => {
 
   const signupFormSchema = Yup.object().shape({
     email: Yup.string().email().required(),
-    username: Yup.string().required().min(3),
+    username: Yup.string().required().min(3).max(12),
     password: Yup.string().required().min(8),
   });
 
