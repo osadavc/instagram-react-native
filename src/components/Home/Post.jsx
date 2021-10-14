@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { View, Text, Image } from "react-native";
 
+import DoubleTapHeart from "../../components/Home/DoubleTapHeart";
+
 import firebase from "firebase";
 import { db } from "../../../firebase";
 
@@ -45,14 +47,25 @@ const Post = ({ post }) => {
         likes_by_users: !isLiked
           ? firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
           : firebase.firestore.FieldValue.arrayRemove(currentUser.uid),
-      })
-      .then();
+      });
+  };
+
+  const handleDoubleTapLike = () => {
+    db.collection("users")
+      .doc(post.uid)
+      .collection("posts")
+      .doc(post.id)
+      .update({
+        likes_by_users: firebase.firestore.FieldValue.arrayUnion(
+          currentUser.uid
+        ),
+      });
   };
 
   return (
     <View style={{ marginBottom: 14 }}>
       <PostHeader post={post} />
-      <PostImage post={post} />
+      <PostImage post={post} handleDoubleTapLike={handleDoubleTapLike} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
         <PostFooter post={post} handleLike={handleLike} isLiked={isLiked} />
         <Likes post={post} />
@@ -116,13 +129,20 @@ const PostHeader = ({ post }) => (
   </View>
 );
 
-const PostImage = ({ post }) => (
-  <View style={{ width: "100%", height: 450 }}>
-    <Image
-      source={{ uri: post?.imageUrl }}
-      style={{ height: "100%", resizeMode: "cover" }}
-    />
-  </View>
+const PostImage = ({ post, handleDoubleTapLike }) => (
+  <DoubleTapHeart
+    icon
+    delay={300}
+    timeout={1000}
+    doubleClick={handleDoubleTapLike}
+  >
+    <View style={{ width: "100%", height: 450 }}>
+      <Image
+        source={{ uri: post?.imageUrl }}
+        style={{ height: "100%", resizeMode: "cover" }}
+      />
+    </View>
+  </DoubleTapHeart>
 );
 
 const PostFooter = ({ handleLike, post, isLiked }) => (

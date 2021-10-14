@@ -24,9 +24,9 @@ const HomeScreen = () => {
         const postList = [];
         snapshot.docs.forEach((doc) => {
           postList.push({ id: doc.id, ...doc.data() });
-          toggleLoading(false);
         });
         setPosts(postList);
+        toggleLoading(false);
       });
 
     return () => unsubscribe();
