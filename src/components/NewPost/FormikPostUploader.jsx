@@ -25,7 +25,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 
 const PLACEHOLDER_IMAGE =
-  "https://www.schemecolor.com/images/color-image-thumb.php?tx&w=1200&h=1200&hex=BBBBBB";
+  "https://www.schemecolor.com/images/color-image-thumb.php?tx&w=1200&h=1200&hex=727272";
 
 const FormikPostUploader = () => {
   const uploadPostSchema = Yup.object().shape({

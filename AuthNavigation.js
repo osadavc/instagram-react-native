@@ -8,7 +8,6 @@ import { useRecoilState } from "recoil";
 import { authState } from "./src/atoms/authAtom";
 
 const AuthNavigation = () => {
-  // const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, toggleLoading] = useState(true);
   const [currentUser, setCurrentUser] = useRecoilState(authState);
 

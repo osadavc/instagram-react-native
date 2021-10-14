@@ -17,8 +17,8 @@ const LoginScreen = () => {
         <View style={styles.container}>
           <View style={styles.logoContainer}>
             <Image
-              source={require("../../assets/instagram.png")}
-              style={{ height: 140, width: 140 }}
+              source={require("../../assets/instagram-black.png")}
+              style={{ height: 80, resizeMode: "center" }}
             />
           </View>
           <LoginForm />
@@ -33,12 +33,11 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
     paddingHorizontal: 12,
     backgroundColor: "white",
+    justifyContent: "center",
   },
   logoContainer: {
     alignItems: "center",
-    marginTop: 60,
   },
 });
