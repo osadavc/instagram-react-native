@@ -9,8 +9,11 @@ import {
   Keyboard,
   Platform,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  ScrollView,
+  Alert,
 } from "react-native";
-import { Divider, Button as ButtonElement } from "react-native-elements";
+import { Button as ButtonElement } from "react-native-elements";
 import * as Yup from "yup";
 import validUrl from "valid-url";
 
@@ -22,7 +25,6 @@ import { authState } from "../../atoms/authAtom";
 import { useRecoilValue } from "recoil";
 
 import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
 
 const PLACEHOLDER_IMAGE =
   "https://www.schemecolor.com/images/color-image-thumb.php?tx&w=1200&h=1200&hex=727272";
@@ -39,12 +41,10 @@ const FormikPostUploader = () => {
   const navigation = useNavigation();
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
     });
-
-    console.log(result);
 
     if (!result.cancelled) {
       setThumbnailUrl(result.uri);
@@ -110,110 +110,114 @@ const FormikPostUploader = () => {
   }, []);
 
   return (
-    <View>
-      <Formik
-        initialValues={{ caption: "" }}
-        onSubmit={(values) => submitPost(values)}
-        validationSchema={uploadPostSchema}
-      >
-        {({
-          handleBlur,
-          handleChange,
-          handleSubmit,
-          values,
-          errors,
-          isValid,
-          dirty,
-        }) => (
-          <View style={{ marginHorizontal: 5, marginRight: 5 }}>
-            <View
-              style={{
-                marginTop: 50,
-              }}
-            >
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView>
+        <Formik
+          initialValues={{ caption: "" }}
+          onSubmit={(values) => submitPost(values)}
+          validationSchema={uploadPostSchema}
+        >
+          {({
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            values,
+            errors,
+            isValid,
+            dirty,
+          }) => (
+            <View style={{ marginHorizontal: 5, marginRight: 5 }}>
               <View
                 style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: thumbnailUrl ? 10 : 0,
+                  marginTop: 50,
                 }}
               >
-                <Image
-                  source={{
-                    uri: validUrl.isUri(thumbnailUrl)
-                      ? thumbnailUrl
-                      : PLACEHOLDER_IMAGE,
-                  }}
-                  style={{ width: "100%", height: 320, borderRadius: 10 }}
-                />
                 <View
                   style={{
-                    position: "absolute",
                     justifyContent: "center",
                     alignItems: "center",
+                    marginBottom: thumbnailUrl ? 10 : 0,
                   }}
                 >
-                  {!!thumbnailUrl || (
-                    <TouchableOpacity
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                      onPress={pickImage}
-                    >
-                      <AntDesign name="plus" color="#000" size={65} />
-                      <Text
+                  <Image
+                    source={{
+                      uri: validUrl.isUri(thumbnailUrl)
+                        ? thumbnailUrl
+                        : PLACEHOLDER_IMAGE,
+                    }}
+                    style={{ width: "100%", height: 320, borderRadius: 10 }}
+                  />
+                  <View
+                    style={{
+                      position: "absolute",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {!!thumbnailUrl || (
+                      <TouchableOpacity
                         style={{
-                          fontSize: 18,
-                          textAlign: "center",
-                          marginTop: 8,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "100%",
                         }}
+                        onPress={pickImage}
                       >
-                        Upload Image
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                        <AntDesign name="plus" color="#000" size={65} />
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            textAlign: "center",
+                            marginTop: 8,
+                          }}
+                        >
+                          Upload Image
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+                {thumbnailUrl && (
+                  <ButtonElement
+                    onPress={() => setThumbnailUrl(null)}
+                    title="Clear"
+                    type="outline"
+                    buttonStyle={{
+                      width: 100,
+                      alignSelf: "flex-end",
+                    }}
+                  />
+                )}
+
+                <View style={{ marginTop: 15 }}>
+                  <TextInput
+                    placeholder="Write A Caption"
+                    placeholderTextColor="gray"
+                    multiline
+                    style={{ color: "white", fontSize: 18 }}
+                    onChangeText={handleChange("caption")}
+                    onBlur={handleBlur("caption")}
+                    value={values.caption}
+                  />
                 </View>
               </View>
-              {thumbnailUrl && (
-                <ButtonElement
-                  onPress={() => setThumbnailUrl(null)}
-                  title="Clear"
-                  type="outline"
-                  buttonStyle={{
-                    width: 100,
-                    alignSelf: "flex-end",
-                  }}
-                />
-              )}
 
-              <View style={{ marginTop: 15 }}>
-                <TextInput
-                  placeholder="Write A Caption"
-                  placeholderTextColor="gray"
-                  multiline
-                  style={{ color: "white", fontSize: 18 }}
-                  onChangeText={handleChange("caption")}
-                  onBlur={handleBlur("caption")}
-                  value={values.caption}
+              <View style={{ marginTop: 20 }}>
+                <ButtonElement
+                  onPress={handleSubmit}
+                  loading={isLoading}
+                  title="Post"
+                  disabled={!(isValid && dirty && !!thumbnailUrl)}
+                  type="outline"
                 />
               </View>
             </View>
-
-            <View style={{ marginTop: 20 }}>
-              <ButtonElement
-                onPress={handleSubmit}
-                loading={isLoading}
-                title="Post"
-                disabled={!(isValid && dirty && !!thumbnailUrl)}
-                type="outline"
-              />
-            </View>
-          </View>
-        )}
-      </Formik>
-    </View>
+          )}
+        </Formik>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

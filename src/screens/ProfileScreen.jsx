@@ -1,23 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text } from "react-native";
-import { StatusBar } from "expo-status-bar";
-
+import React, { useState, useEffect } from "react";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import Constants from "expo-constants";
 import SkeletonContent from "react-native-skeleton-content";
 
-import Header from "../components/Home/Header";
-import Stories from "../components/Home/Stories";
+import Header from "../components/ProfileScreen/Header";
 import Post from "../components/Home/Post";
 
+import { useRecoilValue } from "recoil";
+import { authState } from "../atoms/authAtom";
+import UserData from "../components/ProfileScreen/UserData";
+import { Divider } from "react-native-elements";
 import { db } from "../../firebase";
 
-const HomeScreen = () => {
-  const [posts, setPosts] = useState([{}, {}]);
+const ProfileScreen = () => {
+  const currentUser = useRecoilValue(authState);
+
   const [isLoading, toggleLoading] = useState(true);
+  const [posts, setPosts] = useState([{}, {}]);
 
   useEffect(() => {
-    toggleLoading(true);
     const unsubscribe = db
-      .collectionGroup("posts")
+      .collection("users")
+      .doc(currentUser.uid)
+      .collection("posts")
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
         const postList = [];
@@ -33,10 +47,15 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
       <Header />
-      <Stories />
-      <ScrollView>
+      <ScrollView style={{ flex: 1, marginBottom: 50 }}>
+        <UserData />
+        <Divider
+          style={{ marginTop: 30 }}
+          orientation="vertical"
+          insetType="middle"
+          color="#eee"
+        />
         {posts.map((post, index) => (
           <SkeletonContent
             key={index}
@@ -88,13 +107,12 @@ const HomeScreen = () => {
   );
 };
 
+export default ProfileScreen;
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "black",
     flex: 1,
-    paddingTop: 30,
-    paddingBottom: 50,
+    backgroundColor: "#000",
+    paddingTop: Platform.OS == "android" ? Constants.statusBarHeight : 0,
   },
 });
-
-export default HomeScreen;

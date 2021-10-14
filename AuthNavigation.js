@@ -17,8 +17,7 @@ const AuthNavigation = () => {
       if (user) {
         db.collection("users")
           .doc(user.uid)
-          .get()
-          .then((doc) => {
+          .onSnapshot((doc) => {
             setCurrentUser({
               uid: user.uid,
               name: user.displayName,

@@ -6,13 +6,10 @@ import { auth } from "../../../firebase";
 const Header = () => {
   const navigation = useNavigation();
 
-  const onSignOut = () => {
-    auth.signOut();
-  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onSignOut}>
+      <TouchableOpacity >
         <Image
           style={styles.logo}
           source={require("../../../assets/header-logo.png")}

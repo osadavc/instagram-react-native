@@ -30,12 +30,24 @@ const postFooterIcons = [
   },
 ];
 
+const USER_PLACEHOLDER =
+  "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
+
 const Post = ({ post }) => {
   const [isLiked, toggleLikes] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(USER_PLACEHOLDER);
+
   const currentUser = useRecoilValue(authState);
 
   useEffect(() => {
     toggleLikes(post?.likes_by_users?.includes(currentUser.uid));
+
+    db.collection("users")
+      .doc(post.uid)
+      .get()
+      .then((doc) => {
+        setProfilePicture(doc.data().profile_picture);
+      });
   }, [post]);
 
   const handleLike = () => {
@@ -64,7 +76,7 @@ const Post = ({ post }) => {
 
   return (
     <View style={{ marginBottom: 14 }}>
-      <PostHeader post={post} />
+      <PostHeader post={post} profilePicture={profilePicture} />
       <PostImage post={post} handleDoubleTapLike={handleDoubleTapLike} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
         <PostFooter post={post} handleLike={handleLike} isLiked={isLiked} />
@@ -77,7 +89,7 @@ const Post = ({ post }) => {
   );
 };
 
-const PostHeader = ({ post }) => (
+const PostHeader = ({ post, profilePicture }) => (
   <View
     style={{
       flexDirection: "row",
@@ -91,7 +103,7 @@ const PostHeader = ({ post }) => (
       style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}
     >
       <Image
-        source={{ uri: post?.profile_picture }}
+        source={{ uri: profilePicture ? profilePicture : USER_PLACEHOLDER }}
         style={{
           width: 35,
           height: 35,
@@ -217,7 +229,7 @@ const CommentSection = ({ post }) => (
 
 const Comments = ({ post }) => (
   <>
-    {post?.comments?.map((comment, index) => (
+    {post?.comments?.slice(0, 2)?.map((comment, index) => (
       <View key={index} style={{ flexDirection: "row", marginTop: 3 }}>
         <Text style={{ color: "white" }}>
           <Text style={{ fontWeight: "bold" }}>{comment.user} </Text>
