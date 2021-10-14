@@ -236,7 +236,9 @@ const Comments = ({ post }) => (
       <View key={index} style={{ flexDirection: "row", marginTop: 3 }}>
         <Text style={{ color: "white" }}>
           <Text style={{ fontWeight: "bold" }}>{comment.user} </Text>
-          {comment.comment}
+          {comment.comment.length > 80
+            ? comment.comment.slice(0, 80) + "..."
+            : comment.comment}
         </Text>
       </View>
     ))}
