@@ -61,6 +61,10 @@ const BottomTabs = () => {
           }}
           onPress={() => {
             navigation.navigate("ProfileScreen");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "ProfileScreen" }],
+            });
           }}
         />
       </View>

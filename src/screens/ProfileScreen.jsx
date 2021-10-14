@@ -20,6 +20,7 @@ import { authState } from "../atoms/authAtom";
 import UserData from "../components/ProfileScreen/UserData";
 import { Divider } from "react-native-elements";
 import { db } from "../../firebase";
+import { StatusBar } from "expo-status-bar";
 
 const ProfileScreen = () => {
   const currentUser = useRecoilValue(authState);
@@ -48,6 +49,7 @@ const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header />
+      <StatusBar />
       <ScrollView style={{ flex: 1, marginBottom: 50 }}>
         <UserData />
         <Divider
