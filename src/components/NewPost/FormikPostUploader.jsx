@@ -81,7 +81,6 @@ const FormikPostUploader = () => {
       .add({
         user: currentUser.username,
         uid: currentUser.uid,
-        profile_picture: currentUser.profilePicture,
         imageUrl: await snapshot.ref.getDownloadURL(),
         caption,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
