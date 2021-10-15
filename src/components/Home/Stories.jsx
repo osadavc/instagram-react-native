@@ -1,44 +1,37 @@
-import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, ScrollView } from "react-native";
 import storiesData from "../../data/stories";
+import Story from "./Story";
+
+import { db } from "../../../firebase";
 
 const Stories = () => {
+  const [stories, setStories] = useState([]);
+
+  useEffect(() => {
+    db.collection("users")
+      .limit(20)
+      .onSnapshot((snapshot) => {
+        const storyList = [];
+        snapshot.forEach((doc) => {
+          storyList.push({ id: doc.id, ...doc.data() });
+        });
+        setStories(storyList);
+      });
+  }, []);
+
   return (
     <View style={{ marginBottom: 15, marginTop: 13 }}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {stories.map((story, index) => (
+          <Story key={index} story={story} />
+        ))}
         {storiesData.map((story, index) => (
-          <TouchableOpacity key={index}>
-            <View style={{ alignItems: "center" }}>
-              <Image source={{ uri: story.image }} style={styles.story} />
-              <Text style={{ color: "white" }}>
-                {story.user.length > 8
-                  ? story.user.slice(0, 8).toLowerCase() + "..."
-                  : story.user}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <Story key={index} story={story} />
         ))}
       </ScrollView>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  story: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginLeft: 10,
-    borderWidth: 3,
-    borderColor: "#ff8501",
-  },
-});
 
 export default Stories;
