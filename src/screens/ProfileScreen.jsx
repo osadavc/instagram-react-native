@@ -37,6 +37,7 @@ const ProfileScreen = () => {
     const unsubscribe = profilePostRef
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
+        toggleLoading(true);
         const postList = [];
         snapshot.docs.forEach((doc) => {
           postList.push({ id: doc.id, ...doc.data() });

@@ -15,11 +15,11 @@ const HomeScreen = () => {
   const [isLoading, toggleLoading] = useState(true);
 
   useEffect(() => {
-    toggleLoading(true);
     const unsubscribe = db
       .collectionGroup("posts")
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
+        toggleLoading(true);
         const postList = [];
         snapshot.docs.forEach((doc) => {
           postList.push({ id: doc.id, ...doc.data() });
