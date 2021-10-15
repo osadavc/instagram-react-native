@@ -44,12 +44,14 @@ const Post = ({ post, deleteFunction }) => {
   useEffect(() => {
     toggleLikes(post?.likes_by_users?.includes(currentUser.uid));
 
-    db.collection("users")
+    const unsubscribe = db
+      .collection("users")
       .doc(post.uid)
-      .get()
-      .then((doc) => {
+      .onSnapshot((doc) => {
         setProfilePicture(doc.data().profile_picture);
       });
+
+    return () => unsubscribe();
   }, [post]);
 
   const handleLike = () => {
