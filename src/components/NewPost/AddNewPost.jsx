@@ -26,7 +26,7 @@ export const Header = ({ text, smallText }) => {
           style={{ height: 28, width: 28 }}
         />
       </TouchableOpacity>
-      <Text style={[styles.headerText, { fontSize: smallText && 17 }]}>
+      <Text style={[styles.headerText, { fontSize: smallText ? 17 : 20 }]}>
         {text}
       </Text>
       <View></View>

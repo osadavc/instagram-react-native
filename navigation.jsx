@@ -5,6 +5,7 @@ import BottomTabs from "./src/components/BottomTabs";
 
 import CommentScreen from "./src/screens/CommentScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import LikeListScreen from "./src/screens/LikeListScreen";
 import LoginScreen from "./src/screens/LoginScreen";
 import NewPostScreen from "./src/screens/NewPostScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
@@ -22,6 +23,7 @@ const SignedInStack = () => (
       <Stack.Screen name="CommentScreen" component={CommentScreen} />
       <Stack.Screen name="NewPostScreen" component={NewPostScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="LikeListScreen" component={LikeListScreen} />
     </Stack.Navigator>
     <BottomTabs />
   </NavigationContainer>

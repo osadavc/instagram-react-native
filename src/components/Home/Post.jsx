@@ -225,16 +225,28 @@ const Icon = ({ imageStyle, imageSource, onPress }) => (
   </TouchableOpacity>
 );
 
-const Likes = ({ post }) => (
-  <View style={{ flexDirection: "row", marginTop: 8 }}>
-    <Text style={{ color: "white", fontWeight: "600" }}>
-      {post?.likes_by_users?.length.toLocaleString("en")}{" "}
-      {post?.likes_by_users.length > 1 || post?.likes_by_users.length == 0
-        ? "Likes"
-        : "Like"}
-    </Text>
-  </View>
-);
+const Likes = ({ post }) => {
+  const navigation = useNavigation();
+
+  return (
+    <TouchableOpacity
+      style={{ flexDirection: "row", marginTop: 8 }}
+      onPress={() => {
+        navigation.navigate("LikeListScreen", {
+          postOwner: post.user,
+          postLikes: post.likes_by_users,
+        });
+      }}
+    >
+      <Text style={{ color: "white", fontWeight: "600" }}>
+        {post?.likes_by_users?.length.toLocaleString("en")}{" "}
+        {post?.likes_by_users.length > 1 || post?.likes_by_users.length == 0
+          ? "Likes"
+          : "Like"}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 const Caption = ({ post }) => (
   <View>
